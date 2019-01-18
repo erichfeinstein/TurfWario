@@ -1,13 +1,22 @@
 import React from 'react';
 import SocketIOClient from 'socket.io-client';
-import { StyleSheet, Text, View, Button, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import MapView, { Circle } from 'react-native-maps';
 import axios from 'axios';
 
 // import Login from './Login';
 
 //FSA IP, need to change to dev location
-const IP = 'http://192.168.1.55:3000';
+const IP = 'http://172.16.21.34:3000';
+//Heroku IP
+// const IP = 'https://turfwar-io.herokuapp.com';
 
 export default class App extends React.Component {
   constructor() {
@@ -64,6 +73,19 @@ export default class App extends React.Component {
         caps,
       });
     });
+    this.socket.on('destroy-cap', capToDestroy => {
+      let caps = this.state.caps;
+      caps = caps.filter(cap => {
+        if (cap.id !== capToDestroy.id) {
+          return cap;
+        } else {
+          console.log('found cap to destroy');
+        }
+      });
+      this.setState({
+        caps,
+      });
+    });
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(this.updateState);
   }
@@ -78,42 +100,52 @@ export default class App extends React.Component {
   }
 
   render() {
-    console.log(this.state.caps);
-    const latitude = this.state.latitude;
-    const longitude = this.state.longitude;
+    let latitude = this.state.latitude;
+    let longitude = this.state.longitude;
     return (
       <View style={StyleSheet.absoluteFillObject}>
-        <MapView
-          style={{ ...StyleSheet.absoluteFillObject, flex: 1 }}
-          region={{
-            latitude,
-            longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          showsUserLocation={true}
-        >
-          {this.state.caps.map(cap => {
-            return (
-              <Circle
-                key={cap.id}
-                strokeWidth={1}
-                fillColor={cap.user.team.color}
-                radius={cap.radius}
-                center={{
-                  latitude: cap.latitude,
-                  longitude: cap.longitude,
-                }}
-              />
-            );
-          })}
-        </MapView>
-
-        <View style={styles.footer}>
-          <View style={styles.button}>
-            <Button title="Capture" onPress={() => this.captureArea()} />
+        {this.state.latitude ? (
+          <MapView
+            style={{ ...StyleSheet.absoluteFillObject, flex: 1 }}
+            initialRegion={{
+              latitude,
+              longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+          >
+            {this.state.caps.map(cap => {
+              return (
+                <Circle
+                  key={cap.id}
+                  strokeWidth={1}
+                  fillColor={cap.user.team.color}
+                  radius={cap.radius}
+                  center={{
+                    latitude: cap.latitude,
+                    longitude: cap.longitude,
+                  }}
+                />
+              );
+            })}
+          </MapView>
+        ) : (
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text>Determing your location...</Text>
           </View>
-        </View>
+        )}
+        {this.state.latitude ? (
+          <View style={styles.footer}>
+            <View style={styles.button}>
+              <Button title="Capture" onPress={() => this.captureArea()} />
+            </View>
+          </View>
+        ) : (
+          <View />
+        )}
       </View>
     );
   }
