@@ -25,7 +25,10 @@ export default class App extends React.Component {
       user: { id: 1, username: 'eric', name: 'Eric', teamId: 1 },
       latitude: 0,
       longitude: 0,
+      circleCentLat: 0,
+      circleCentLong: 0,
       caps: {},
+      playerRadius: 0, //Radius that player sees of their effective area
     };
     //SOCKET
     this.socket = SocketIOClient(IP);
@@ -58,13 +61,14 @@ export default class App extends React.Component {
     });
   }
 
-  gotCapInfoFromServer(caps) {
+  gotCapInfoFromServer(caps, radius) {
     let mapOfCaps = {};
     caps.map(cap => {
       mapOfCaps[cap.id] = cap;
     });
     this.setState({
       caps: mapOfCaps,
+      playerRadius: radius,
     });
   }
 
@@ -91,8 +95,8 @@ export default class App extends React.Component {
   async captureArea() {
     console.log('emitting capture');
     await this.socket.emit('capture', {
-      latitude: this.state.latitude,
-      longitude: this.state.longitude,
+      latitude: this.state.circleCentLat,
+      longitude: this.state.circleCentLong,
       userId: this.state.user.id,
     });
   }
@@ -111,9 +115,12 @@ export default class App extends React.Component {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
-            // onUserLocationChange={pos => {
-            //   console.log('position', pos);
-            // }}
+            onUserLocationChange={pos => {
+              this.setState({
+                circleCentLat: pos.nativeEvent.coordinate.latitude,
+                circleCentLong: pos.nativeEvent.coordinate.longitude,
+              });
+            }}
             showsUserLocation={true}
             showsMyLocationButton={true}
           >
@@ -135,12 +142,12 @@ export default class App extends React.Component {
             {/* Will this circle move with you? */}
             <Circle
               center={{
-                latitude: this.state.latitude,
-                longitude: this.state.longitude,
+                latitude: this.state.circleCentLat,
+                longitude: this.state.circleCentLong,
               }}
               strokeWidth={4}
               strokeColor={'#00000030'}
-              radius={200}
+              radius={this.state.playerRadius}
             />
           </MapView>
         ) : (
