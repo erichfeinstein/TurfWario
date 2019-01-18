@@ -113,6 +113,9 @@ export default class App extends React.Component {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
+            // onUserLocationChange={pos => {
+            //   console.log('position', pos);
+            // }}
             showsUserLocation={true}
             showsMyLocationButton={true}
           >
@@ -130,6 +133,17 @@ export default class App extends React.Component {
                 />
               );
             })}
+            {/* Where you are */}
+            {/* Will this circle move with you? */}
+            <Circle
+              center={{
+                latitude: this.state.latitude,
+                longitude: this.state.longitude,
+              }}
+              strokeWidth={4}
+              strokeColor={'#00000030'}
+              radius={200}
+            />
           </MapView>
         ) : (
           <View style={styles.container}>
