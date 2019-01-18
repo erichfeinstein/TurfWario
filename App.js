@@ -25,7 +25,7 @@ export default class App extends React.Component {
       user: { id: 1, username: 'eric', name: 'Eric', teamId: 1 },
       latitude: 0,
       longitude: 0,
-      caps: [],
+      caps: {},
     };
     //SOCKET
     this.socket = SocketIOClient(IP);
@@ -59,8 +59,12 @@ export default class App extends React.Component {
   }
 
   gotCapInfoFromServer(caps) {
+    let mapOfCaps = {};
+    caps.map(cap => {
+      mapOfCaps[cap.id] = cap;
+    });
     this.setState({
-      caps,
+      caps: mapOfCaps,
     });
   }
 
@@ -68,20 +72,14 @@ export default class App extends React.Component {
     this.socket.on('all-captures', this.gotCapInfoFromServer);
     this.socket.on('new-cap', cap => {
       let caps = this.state.caps;
-      caps.push(cap);
+      caps[cap.id] = cap;
       this.setState({
         caps,
       });
     });
     this.socket.on('destroy-cap', capToDestroy => {
       let caps = this.state.caps;
-      caps = caps.filter(cap => {
-        if (cap.id !== capToDestroy.id) {
-          return cap;
-        } else {
-          console.log('found cap to destroy');
-        }
-      });
+      delete caps[capToDestroy.id];
       this.setState({
         caps,
       });
@@ -119,7 +117,7 @@ export default class App extends React.Component {
             showsUserLocation={true}
             showsMyLocationButton={true}
           >
-            {this.state.caps.map(cap => {
+            {Object.values(this.state.caps).map(cap => {
               return (
                 <Circle
                   key={cap.id}
