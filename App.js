@@ -73,12 +73,12 @@ export default class App extends React.Component {
     await this.socket.emit('capture', {
       latitude: this.state.latitude,
       longitude: this.state.longitude,
-      teamId: this.state.user.teamId,
+      userId: this.state.user.id,
     });
   }
 
   render() {
-    // console.log(this.state.user);
+    console.log(this.state.caps);
     const latitude = this.state.latitude;
     const longitude = this.state.longitude;
     return (
@@ -98,7 +98,7 @@ export default class App extends React.Component {
               <Circle
                 key={cap.id}
                 strokeWidth={1}
-                fillColor={cap.team.color}
+                fillColor={cap.user.team.color}
                 radius={cap.radius}
                 center={{
                   latitude: cap.latitude,
