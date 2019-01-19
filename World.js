@@ -119,6 +119,7 @@ export default class World extends React.Component {
         <StatusBar hidden={false} />
         {this.state.latitude ? (
           <MapView
+            mapPadding={{ top: sBarHeight }}
             style={{ ...StyleSheet.absoluteFillObject, flex: 1 }}
             initialRegion={{
               latitude,
