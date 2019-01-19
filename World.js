@@ -43,6 +43,7 @@ export default class World extends React.Component {
     this.setState({
       latitude,
       longitude,
+      outOfCaps: false,
     });
   }
 
@@ -71,6 +72,11 @@ export default class World extends React.Component {
       delete caps[capToDestroy.id];
       this.setState({
         caps,
+      });
+    });
+    this.socket.on('out-of-caps', () => {
+      this.setState({
+        outOfCaps: true,
       });
     });
     if (navigator.geolocation)
@@ -146,7 +152,8 @@ export default class World extends React.Component {
         )}
         {this.state.latitude ? (
           <View>
-            {this.props.navigation.getParam('user', false) ? (
+            {this.props.navigation.getParam('user', false) &&
+            !this.state.outOfCaps ? (
               <View style={styles.footer}>
                 <Button
                   buttonStyle={{
@@ -163,7 +170,19 @@ export default class World extends React.Component {
                 />
               </View>
             ) : (
-              undefined
+              <View
+                style={{
+                  ...styles.footer,
+                  height: 50,
+                  backgroundColor: '#bcbcbc50',
+                }}
+              >
+                <Text>
+                  {this.state.outOfCaps
+                    ? 'Out of captures'
+                    : 'Sign in to play!'}
+                </Text>
+              </View>
             )}
             {/* Menu Button */}
             <View
