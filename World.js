@@ -7,6 +7,8 @@ import {
   StatusBar,
   Dimensions,
 } from 'react-native';
+import { StackActions } from 'react-navigation';
+import axios from 'axios';
 import { Button, Icon } from 'react-native-elements';
 import SocketIOClient from 'socket.io-client';
 import MapView, { Circle } from 'react-native-maps';
@@ -33,6 +35,7 @@ export default class World extends React.Component {
 
     //Binds
     this.updateState = this.updateState.bind(this);
+    this.rememberMe = this.rememberMe.bind(this);
     this.captureArea = this.captureArea.bind(this);
     this.gotCapInfoFromServer = this.gotCapInfoFromServer.bind(this);
   }
@@ -43,7 +46,6 @@ export default class World extends React.Component {
     this.setState({
       latitude,
       longitude,
-      outOfCaps: false,
     });
   }
 
@@ -58,7 +60,23 @@ export default class World extends React.Component {
     });
   }
 
+  async rememberMe() {
+    const user = await axios.get(`${IP}/rememberme`);
+    let outOfCaps = user.data.capCount < 1;
+    this.props.navigation.dispatch(
+      StackActions.push({
+        routeName: 'World',
+        params: {
+          user: user.data,
+          outOfCaps,
+        },
+      })
+    );
+    this.props.navigation.navigate('World', { user: user.data, outOfCaps });
+  }
+
   componentDidMount() {
+    this.rememberMe();
     this.socket.on('all-captures', this.gotCapInfoFromServer);
     this.socket.on('new-cap', cap => {
       let caps = this.state.caps;
@@ -75,16 +93,14 @@ export default class World extends React.Component {
       });
     });
     this.socket.on('out-of-caps', () => {
-      this.setState({
-        outOfCaps: true,
-      });
+      this.props.navigation.navigate('World', { outOfCaps: true });
     });
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(this.updateState);
   }
 
   async captureArea() {
-    console.log('emitting capture');
+    console.log('Attempting to capture area');
     const user = this.props.navigation.getParam('user', false);
     if (user) {
       await this.socket.emit('capture', {
@@ -153,7 +169,7 @@ export default class World extends React.Component {
         {this.state.latitude ? (
           <View>
             {this.props.navigation.getParam('user', false) &&
-            !this.state.outOfCaps ? (
+            !this.props.navigation.state.params.outOfCaps ? (
               <View style={styles.footer}>
                 <Button
                   buttonStyle={{
@@ -178,7 +194,8 @@ export default class World extends React.Component {
                 }}
               >
                 <Text>
-                  {this.state.outOfCaps
+                  {this.props.navigation.state.params &&
+                  this.props.navigation.state.params.outOfCaps
                     ? 'Out of captures'
                     : 'Sign in to play!'}
                 </Text>

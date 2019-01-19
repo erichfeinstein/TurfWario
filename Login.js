@@ -1,4 +1,5 @@
 import React from 'react';
+import { StackActions } from 'react-navigation';
 import { Button, Icon } from 'react-native-elements';
 import axios from 'axios';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -141,7 +142,17 @@ export default class Login extends React.Component {
         username: '',
         password: '',
       });
-      this.props.navigation.navigate('World', { user: user.data });
+      let outOfCaps = user.data.capCount < 1;
+      this.props.navigation.dispatch(
+        StackActions.push({
+          routeName: 'World',
+          params: {
+            user: user.data,
+            outOfCaps,
+          },
+        })
+      );
+      this.props.navigation.navigate('World', { user: user.data, outOfCaps });
     } catch (err) {
       Alert.alert('Oops', 'There was a problem signing in', [
         {
