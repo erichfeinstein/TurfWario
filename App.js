@@ -35,7 +35,7 @@ const DrawerNavigator = createDrawerNavigator(
   },
 
   {
-    drawerWidth: 150,
+    drawerWidth: 180,
     contentComponent,
     contentOptions: {
       title: 'TurfWar.io',

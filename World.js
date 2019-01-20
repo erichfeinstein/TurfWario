@@ -176,7 +176,8 @@ export default class World extends React.Component {
         )}
         {this.state.latitude ? (
           <View>
-            {this.props.navigation.getParam('user', false) &&
+            {this.props.navigation.state.params &&
+            this.props.navigation.state.params.user.id &&
             !this.props.navigation.state.params.outOfCaps ? (
               <View style={styles.footer}>
                 <Button
@@ -186,7 +187,7 @@ export default class World extends React.Component {
                     height: 70,
                     flex: 1,
                     justifyContent: 'center',
-                    backgroundColor: this.props.navigation.getParam('user', 0)
+                    backgroundColor: this.props.navigation.state.params.user
                       .team.color,
                   }}
                   title="Capture"
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    top: Dimensions.get('window').height - 150,
+    top: Dimensions.get('window').height - 170,
     width: Dimensions.get('window').width,
     alignItems: 'center',
     justifyContent: 'center',
