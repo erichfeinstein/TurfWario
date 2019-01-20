@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { withNavigation, StackActions } from 'react-navigation';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import SocketIOClient from 'socket.io-client';
 import axios from 'axios';
 
 const sBarHeight = getStatusBarHeight();
@@ -12,23 +13,32 @@ const IP = 'http://192.168.1.55:3000';
 class Profile extends React.Component {
   constructor() {
     super();
+    this.state = {
+      points: 0,
+    };
     this.logout = this.logout.bind(this);
+    //SOCKET
+    this.socket = SocketIOClient(IP);
+  }
+
+  componentDidMount() {
+    this.setState({ points: this.props.user.capsPlaced.length });
+    this.socket.on('new-cap', cap => {
+      if (this.props.user.id === cap.user.id)
+        this.setState({
+          points: this.state.points + 1,
+        });
+    });
+    this.socket.on('destroy-cap', capToDestroy => {
+      if (this.props.user.id === capToDestroy.user.id)
+        this.setState({
+          points: this.state.points + 1,
+        });
+    });
   }
   async logout() {
     const res = await axios.post(`${IP}/logout`);
-    // this.props.navigation.navigate('ProfileLoginSwitch');
-    // this.props.navigation.dispatch(
-    //   StackActions.push({
-    //     routeName: 'World',
-    //     params: {
-    //       user: {},
-    //       outOfCaps: false,
-    //     },
-    //   })
-    // );
     this.props.setLoading();
-    // this.props.navigation.setParams('user', {});
-    // this.props.navigation.push('World');
   }
 
   render() {
@@ -66,7 +76,7 @@ class Profile extends React.Component {
             <Text style={styles.titleText}>{this.props.user.username}</Text>
           </View>
           <Text style={{ fontSize: 35, padding: 20 }}>
-            Points: {this.props.user.capsPlaced.length}
+            Points: {this.state.points}
           </Text>
           <Button
             buttonStyle={{ borderRadius: 10, backgroundColor: 'red' }}
