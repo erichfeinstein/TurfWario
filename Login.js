@@ -11,10 +11,9 @@ import {
   Alert,
   StyleSheet,
   View,
+  ScrollView,
   KeyboardAvoidingView,
   Text,
-  Container,
-  Label,
   TextInput,
   Picker,
   Keyboard,
@@ -40,7 +39,7 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding">
+      <View>
         {/* Menu Button */}
         <View style={{ top: sBarHeight + 20, left: 20, width: 40, height: 40 }}>
           <Icon
@@ -55,7 +54,7 @@ export default class Login extends React.Component {
         </View>
 
         {/* Form */}
-        <View style={styles.container}>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
           <TextInput
             onChangeText={password => {
               this.setState({
@@ -84,53 +83,56 @@ export default class Login extends React.Component {
             secureTextEntry={true}
             style={styles.textInput}
           />
-          {this.state.teams && this.state.signingUp ? (
-            <View>
-              <Text>Team</Text>
-              <Picker
-                style={{ height: 50, width: 100 }}
-                selectedValue={this.state.teamId}
-                onValueChange={teamId => this.setState({ teamId })}
-              >
-                {this.state.teams.map((team, key) => (
-                  <Picker.Item key={key} value={team.id} label={team.name} />
-                ))}
-              </Picker>
-            </View>
-          ) : (
-            undefined
-          )}
-          <Button
-            title={this.state.signingUp ? 'Sign Up' : 'Log In'}
-            buttonStyle={{
-              backgroundColor: '#3D81CA',
-              borderRadius: 10,
-              margin: 20,
-            }}
-            onPress={
-              this.state.signingUp
-                ? () =>
-                    this.signUp(
-                      this.state.username,
-                      this.state.password,
-                      this.state.teamId
-                    )
-                : () => this.login(this.state.username, this.state.password)
-            }
-          />
-          {!this.state.signingUp ? (
+          <View>
+            {this.state.teams && this.state.signingUp ? (
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text>Team</Text>
+                <Picker
+                  style={{ height: 50, width: 100 }}
+                  selectedValue={this.state.teamId}
+                  onValueChange={teamId => this.setState({ teamId })}
+                >
+                  {this.state.teams.map((team, key) => (
+                    <Picker.Item key={key} value={team.id} label={team.name} />
+                  ))}
+                </Picker>
+              </View>
+            ) : (
+              undefined
+            )}
             <Button
-              title="Signup Form"
-              onPress={() => this.setState({ signingUp: true })}
+              title={this.state.signingUp ? 'Sign Up' : 'Log In'}
+              buttonStyle={{
+                backgroundColor: '#3D81CA',
+                borderRadius: 5,
+                width: 100,
+                margin: 20,
+              }}
+              onPress={
+                this.state.signingUp
+                  ? () =>
+                      this.signUp(
+                        this.state.username,
+                        this.state.password,
+                        this.state.teamId
+                      )
+                  : () => this.login(this.state.username, this.state.password)
+              }
             />
-          ) : (
-            <Button
-              title="Login Form"
-              onPress={() => this.setState({ signingUp: false })}
-            />
-          )}
-        </View>
-      </KeyboardAvoidingView>
+            {!this.state.signingUp ? (
+              <Button
+                title="Signup Form"
+                onPress={() => this.setState({ signingUp: true })}
+              />
+            ) : (
+              <Button
+                title="Login Form"
+                onPress={() => this.setState({ signingUp: false })}
+              />
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </View>
     );
   }
 
@@ -190,7 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000030',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20,
     marginTop: sBarHeight + 40,
   },
   textInput: {
