@@ -10,6 +10,8 @@ import {
 import World from './World';
 import Login from './Login';
 import Scoreboard from './Scoreboard';
+import Profile from './Profile';
+import ProfileLoginSwitch from './ProfileLoginSwitch';
 
 const contentComponent = props => (
   <ScrollView>
@@ -28,9 +30,12 @@ const DrawerNavigator = createDrawerNavigator(
   {
     World: {
       screen: World,
+      props: {
+        func: () => console.log('test'),
+      },
     },
-    'Login/Sign Up': {
-      screen: Login,
+    Profile: {
+      screen: ProfileLoginSwitch,
     },
   },
 
@@ -50,8 +55,6 @@ const DrawerNavigator = createDrawerNavigator(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   titleText: {
     padding: 20,

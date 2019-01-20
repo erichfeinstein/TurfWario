@@ -1,5 +1,5 @@
 import React from 'react';
-import { StackActions } from 'react-navigation';
+import { withNavigation, StackActions } from 'react-navigation';
 import { Button, Icon } from 'react-native-elements';
 import axios from 'axios';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -19,7 +19,7 @@ import {
   Keyboard,
 } from 'react-native';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -88,7 +88,7 @@ export default class Login extends React.Component {
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Text>Team</Text>
                 <Picker
-                  style={{ height: 50, width: 100 }}
+                  style={{ width: 100 }}
                   selectedValue={this.state.teamId}
                   onValueChange={teamId => this.setState({ teamId })}
                 >
@@ -144,18 +144,11 @@ export default class Login extends React.Component {
         username: '',
         password: '',
       });
+      this.props.setLoading();
       let outOfCaps = user.data.capCount < 1;
-      this.props.navigation.dispatch(
-        StackActions.push({
-          routeName: 'World',
-          params: {
-            user: user.data,
-            outOfCaps,
-          },
-        })
-      );
       this.props.navigation.navigate('World', { user: user.data, outOfCaps });
     } catch (err) {
+      console.log(err);
       Alert.alert('Oops', 'There was a problem signing in', [
         {
           text: 'Ok',
@@ -175,8 +168,10 @@ export default class Login extends React.Component {
         username: '',
         password: '',
       });
+      this.props.setLoading();
       this.props.navigation.navigate('World', { user: user.data });
     } catch (err) {
+      console.log(err);
       Alert.alert('Oops', 'There was a problem creating your account', [
         {
           text: 'Ok',
@@ -186,6 +181,8 @@ export default class Login extends React.Component {
     }
   }
 }
+
+export default withNavigation(Login);
 
 const styles = StyleSheet.create({
   container: {
