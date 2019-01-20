@@ -21,10 +21,15 @@ export default class ProfileLoginSwitch extends React.Component {
 
   async rememberMe() {
     const user = await axios.get(`${IP}/rememberme`);
-    this.setState({
-      user: user.data,
-      loading: false,
-    });
+    console.log(user.data);
+    if (
+      this.state.user.id !== user.data.id ||
+      this.state.user.capsPlaced.length !== user.data.capsPlaced.length
+    )
+      this.setState({
+        user: user.data,
+        loading: false,
+      });
   }
   setLoading() {
     this.setState({
@@ -37,7 +42,8 @@ export default class ProfileLoginSwitch extends React.Component {
   }
 
   render() {
-    if (this.state.loading) this.rememberMe();
+    console.log('render triggered');
+    this.rememberMe();
     return this.state.loading ? (
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#0000ff" />

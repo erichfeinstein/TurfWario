@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Button, Icon } from 'react-native-elements';
 import SocketIOClient from 'socket.io-client';
 import MapView, { Circle } from 'react-native-maps';
+
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import mapStyle from './mapStyle';
@@ -124,6 +125,9 @@ export default class World extends React.Component {
         <StatusBar hidden={false} />
         {this.state.latitude ? (
           <MapView
+            minZoomLevel={14}
+            loadingEnabled={true}
+            // cacheEnabled={true}
             provider="google"
             customMapStyle={mapStyle}
             mapPadding={{ top: sBarHeight }}
@@ -148,6 +152,9 @@ export default class World extends React.Component {
               return (
                 <Circle
                   key={cap.id}
+                  lineCap="square"
+                  lineJoin="bevel"
+                  miterLimit={150}
                   strokeWidth={1}
                   fillColor={cap.user.team.color}
                   radius={cap.radius}
