@@ -22,6 +22,9 @@ const IP = 'http://192.168.1.55:3000';
 //Heroku IP
 // const IP = 'https://turfwar-io.herokuapp.com';
 
+const MAX_LAT_DELTA = 0.435;
+const MAX_LONG_DELTA = 0.3;
+
 const sBarHeight = getStatusBarHeight();
 
 export default class World extends React.Component {
@@ -30,6 +33,10 @@ export default class World extends React.Component {
     this.state = {
       latitude: 0,
       longitude: 0,
+      viewedLat: 0,
+      viewedLong: 0,
+      viewedLatDelta: 0.0922,
+      viewedLongDelta: 0.0421,
       caps: {},
       playerRadius: 0, //Radius that player sees of their effective area
     };
@@ -49,6 +56,8 @@ export default class World extends React.Component {
     this.setState({
       latitude,
       longitude,
+      viewedLat: latitude,
+      viewedLong: longitude,
     });
   }
 
@@ -125,13 +134,18 @@ export default class World extends React.Component {
         <StatusBar hidden={false} />
         {this.state.latitude ? (
           <MapView
-            minZoomLevel={14}
-            loadingEnabled={true}
-            // cacheEnabled={true}
             provider="google"
             customMapStyle={mapStyle}
             mapPadding={{ top: sBarHeight }}
             style={{ ...StyleSheet.absoluteFillObject, flex: 1 }}
+            onRegionChangeComplete={region => {
+              this.setState({
+                viewedLat: region.latitude,
+                viewedLong: region.longitude,
+                viewedLatDelta: region.latitudeDelta,
+                viewedLongDelta: region.longitudeDelta,
+              });
+            }}
             initialRegion={{
               latitude,
               longitude,
@@ -148,22 +162,31 @@ export default class World extends React.Component {
             showsUserLocation={true}
             showsMyLocationButton={true}
           >
+            {/* Only show cap points where the user is looking in the MapView, and not when user is zoomed out very far */}
             {Object.values(this.state.caps).map(cap => {
-              return (
-                <Circle
-                  key={cap.id}
-                  lineCap="square"
-                  lineJoin="bevel"
-                  miterLimit={150}
-                  strokeWidth={1}
-                  fillColor={cap.user.team.color}
-                  radius={cap.radius}
-                  center={{
-                    latitude: cap.latitude,
-                    longitude: cap.longitude,
-                  }}
-                />
-              );
+              if (
+                this.state.viewedLatDelta < MAX_LAT_DELTA &&
+                this.state.viewedLongDelta < MAX_LONG_DELTA &&
+                Math.abs(cap.latitude - this.state.viewedLat) <
+                  this.state.viewedLatDelta &&
+                Math.abs(cap.longitude - this.state.viewedLong) <
+                  this.state.viewedLongDelta
+              )
+                return (
+                  <Circle
+                    key={cap.id}
+                    lineCap="square"
+                    lineJoin="bevel"
+                    miterLimit={150}
+                    strokeWidth={0}
+                    fillColor={cap.user.team.color}
+                    radius={cap.radius}
+                    center={{
+                      latitude: cap.latitude,
+                      longitude: cap.longitude,
+                    }}
+                  />
+                );
             })}
             <Circle
               center={{

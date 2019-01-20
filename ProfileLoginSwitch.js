@@ -21,7 +21,12 @@ export default class ProfileLoginSwitch extends React.Component {
 
   async rememberMe() {
     const user = await axios.get(`${IP}/rememberme`);
-    if (
+    if (!user.data.id) {
+      this.setState({
+        loading: false,
+        user: {},
+      });
+    } else if (
       this.state.user.id !== user.data.id ||
       this.state.user.capsPlaced.length !== user.data.capsPlaced.length
     )
