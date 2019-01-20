@@ -1,19 +1,29 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { createAppContainer, createDrawerNavigator } from 'react-navigation';
+import { ScrollView, Text, StyleSheet } from 'react-native';
+import {
+  createAppContainer,
+  createDrawerNavigator,
+  DrawerItems,
+  SafeAreaView,
+} from 'react-navigation';
 
 import World from './World';
 import Login from './Login';
-class Auth extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-}
+import Scoreboard from './Scoreboard';
+
+const contentComponent = props => (
+  <ScrollView>
+    <SafeAreaView
+      style={styles.container}
+      forceInset={{ top: 'always', horizontal: 'never' }}
+    >
+      <Text style={styles.titleText}>TurfWar.io</Text>
+      <DrawerItems {...props} />
+      <Scoreboard />
+    </SafeAreaView>
+  </ScrollView>
+);
+
 const DrawerNavigator = createDrawerNavigator(
   {
     World: {
@@ -22,18 +32,31 @@ const DrawerNavigator = createDrawerNavigator(
     'Login/Sign Up': {
       screen: Login,
     },
+  },
+
+  {
+    drawerWidth: 150,
+    contentComponent,
+    contentOptions: {
+      title: 'TurfWar.io',
+      activeTintColor: '#e91e63',
+      itemsContainerStyle: {
+        marginVertical: 0,
+      },
+    },
   }
-  // {
-  //   initialRouteName: Auth,
-  // }
 );
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  titleText: {
+    padding: 20,
+    fontSize: 25,
+    fontWeight: 'bold',
   },
 });
 

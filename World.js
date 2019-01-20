@@ -87,13 +87,16 @@ export default class World extends React.Component {
     });
     this.socket.on('destroy-cap', capToDestroy => {
       let caps = this.state.caps;
-      delete caps[capToDestroy.id];
+      delete caps[capToDestroy.cap.id];
       this.setState({
         caps,
       });
     });
     this.socket.on('out-of-caps', () => {
       this.props.navigation.navigate('World', { outOfCaps: true });
+    });
+    this.socket.on('daily-reset', () => {
+      this.props.navigation.navigate('World', { outOfCaps: false });
     });
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(this.updateState);
