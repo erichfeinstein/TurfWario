@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, Text, StyleSheet, Linking, Button } from 'react-native';
 import {
   createAppContainer,
   createDrawerNavigator,
@@ -11,6 +11,9 @@ import World from './Components/World';
 import Scoreboard from './Components/Scoreboard';
 import ProfileLoginSwitch from './Components/ProfileLoginSwitch';
 
+import { IP } from './global';
+console.log('Connected to server', IP);
+
 const contentComponent = props => (
   <ScrollView>
     <SafeAreaView
@@ -19,6 +22,13 @@ const contentComponent = props => (
     >
       <Text style={styles.titleText}>TurfWar.io</Text>
       <DrawerItems {...props} />
+      <Button
+        title="About"
+        color="#e91e63"
+        onPress={() => {
+          Linking.openURL(IP);
+        }}
+      />
       <Scoreboard />
     </SafeAreaView>
   </ScrollView>

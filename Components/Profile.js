@@ -41,7 +41,7 @@ class Profile extends React.Component {
   }
   async logout() {
     try {
-      await axios.post(`${IP}/logout`);
+      await axios.post(`${IP}/auth/logout`);
       this.props.setLoading();
       this.props.navigation.navigate('World', { user: {} });
     } catch (err) {

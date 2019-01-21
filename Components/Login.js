@@ -1,10 +1,10 @@
 import React from 'react';
-import { withNavigation, StackActions } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
 import { Button, Icon } from 'react-native-elements';
 import axios from 'axios';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-const IP = 'http://192.168.1.55:3000';
+import { IP } from '../global';
 const sBarHeight = getStatusBarHeight();
 
 import {
@@ -30,10 +30,11 @@ class Login extends React.Component {
       signingUp: false,
     };
     this.login = this.login.bind(this);
+    this.signUp = this.signUp.bind(this);
   }
 
   async componentDidMount() {
-    const teams = await axios.get(`${IP}/teams`);
+    const teams = await axios.get(`${IP}/api/teams`);
     this.setState({ teams: teams.data });
   }
 
@@ -139,11 +140,12 @@ class Login extends React.Component {
   async login(username, password) {
     try {
       console.log('Attempting to log in');
-      const user = await axios.post(`${IP}/login`, { username, password });
+      const user = await axios.post(`${IP}/auth/login`, { username, password });
       await this.setState({
         username: '',
         password: '',
       });
+      this.props.setLoading();
       this.props.navigation.navigate('World', { user: user.data });
     } catch (err) {
       console.log(err);
@@ -157,7 +159,7 @@ class Login extends React.Component {
   }
   async signUp(username, password, teamId) {
     try {
-      const user = await axios.post(`${IP}/signup`, {
+      const user = await axios.post(`${IP}/auth/signup`, {
         username,
         password,
         teamId,
