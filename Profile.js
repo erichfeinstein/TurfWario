@@ -1,28 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
-import { withNavigation, StackActions } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import SocketIOClient from 'socket.io-client';
 import axios from 'axios';
 
 const sBarHeight = getStatusBarHeight();
 
-const IP = 'http://192.168.1.55:3000';
+import { IP } from './global';
 
-class Profile extends React.Component {
+export default class Profile extends React.Component {
   constructor() {
     super();
     this.state = {
       points: 0,
     };
     this.logout = this.logout.bind(this);
-    //SOCKET
-    this.socket = SocketIOClient(IP);
   }
 
   componentDidMount() {
     this.setState({ points: this.props.user.capsPlaced.length });
+    //SOCKET
+    this.socket = SocketIOClient(IP);
     this.socket.on('new-cap', cap => {
       if (this.props.user.id === cap.user.id)
         this.setState({
@@ -30,11 +30,14 @@ class Profile extends React.Component {
         });
     });
     this.socket.on('destroy-cap', capToDestroy => {
-      if (this.props.user.id === capToDestroy.user.id)
+      if (this.props.user.id === capToDestroy.cap.user.id)
         this.setState({
           points: this.state.points + 1,
         });
     });
+  }
+  componentWillUnmount() {
+    this.socket.emit('disconnect');
   }
   async logout() {
     const res = await axios.post(`${IP}/logout`);
@@ -90,7 +93,7 @@ class Profile extends React.Component {
   }
 }
 
-export default withNavigation(Profile);
+// export default withNavigation(Profile);
 
 const styles = StyleSheet.create({
   container: {

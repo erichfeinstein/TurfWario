@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SocketIOClient from 'socket.io-client';
-const IP = 'http://192.168.1.55:3000';
+import { IP } from './global';
 
 export default class Scoreboard extends React.Component {
   constructor() {
@@ -10,9 +10,9 @@ export default class Scoreboard extends React.Component {
     this.state = {
       teamScores: {},
     };
-    this.socket = SocketIOClient(IP);
   }
   componentDidMount() {
+    this.socket = SocketIOClient(IP);
     this.socket.on('all-captures', allCaps => {
       let map = {};
       allCaps.map(cap => {
@@ -56,6 +56,10 @@ export default class Scoreboard extends React.Component {
       });
     });
   }
+  componentWillUnmount() {
+    this.socket.emit('disconnect');
+  }
+
   render() {
     return (
       <View>

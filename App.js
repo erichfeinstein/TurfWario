@@ -8,9 +8,7 @@ import {
 } from 'react-navigation';
 
 import World from './World';
-import Login from './Login';
 import Scoreboard from './Scoreboard';
-import Profile from './Profile';
 import ProfileLoginSwitch from './ProfileLoginSwitch';
 
 const contentComponent = props => (
@@ -30,9 +28,6 @@ const DrawerNavigator = createDrawerNavigator(
   {
     World: {
       screen: World,
-      props: {
-        func: () => console.log('test'),
-      },
     },
     Profile: {
       screen: ProfileLoginSwitch,

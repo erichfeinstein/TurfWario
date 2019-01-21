@@ -16,17 +16,12 @@ import MapView, { Circle } from 'react-native-maps';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import mapStyle from './mapStyle';
+import { IP } from './global';
 
-//FSA IP, need to change to dev location
-const IP = 'http://192.168.1.55:3000';
-//Heroku IP
-// const IP = 'https://turfwar-io.herokuapp.com';
-
-const MAX_LAT_DELTA = 0.435;
-const MAX_LONG_DELTA = 0.3;
+const MAX_LAT_DELTA = 0.7;
+const MAX_LONG_DELTA = 0.7;
 
 const sBarHeight = getStatusBarHeight();
-
 export default class World extends React.Component {
   constructor() {
     super();
@@ -40,8 +35,6 @@ export default class World extends React.Component {
       caps: {},
       playerRadius: 0, //Radius that player sees of their effective area
     };
-    //SOCKET
-    this.socket = SocketIOClient(IP);
 
     //Binds
     this.updateState = this.updateState.bind(this);
@@ -89,6 +82,8 @@ export default class World extends React.Component {
 
   componentDidMount() {
     this.rememberMe();
+    //SOCKET
+    this.socket = SocketIOClient(IP);
     this.socket.on('all-captures', this.gotCapInfoFromServer);
     this.socket.on('new-cap', cap => {
       let caps = this.state.caps;
@@ -112,6 +107,9 @@ export default class World extends React.Component {
     });
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(this.updateState);
+  }
+  componentWillUnmount() {
+    this.socket.emit('disconnect');
   }
 
   async captureArea() {
@@ -177,7 +175,7 @@ export default class World extends React.Component {
                     key={cap.id}
                     lineCap="square"
                     lineJoin="bevel"
-                    miterLimit={150}
+                    miterLimit={250}
                     strokeWidth={0}
                     fillColor={cap.user.team.color}
                     radius={cap.radius}
@@ -201,7 +199,7 @@ export default class World extends React.Component {
         ) : (
           <View style={styles.container}>
             <ActivityIndicator size="large" color="#0000ff" />
-            <Text>Determing your location...</Text>
+            <Text>Finding your location...</Text>
           </View>
         )}
         {this.state.latitude ? (

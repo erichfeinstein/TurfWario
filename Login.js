@@ -138,7 +138,7 @@ class Login extends React.Component {
 
   async login(username, password) {
     try {
-      console.log('attempting to log in');
+      console.log('Attempting to log in');
       const user = await axios.post(`${IP}/login`, { username, password });
       this.setState({
         username: '',

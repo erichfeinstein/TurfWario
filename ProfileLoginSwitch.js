@@ -48,9 +48,15 @@ export default class ProfileLoginSwitch extends React.Component {
   render() {
     this.rememberMe();
     return this.state.loading ? (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
+        <Text style={{ textAlign: 'center' }}>Loading...</Text>
       </View>
     ) : this.state.user.id ? (
       <Profile setLoading={this.setLoading} user={this.state.user} />
