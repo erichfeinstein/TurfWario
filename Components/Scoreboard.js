@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SocketIOClient from 'socket.io-client';
-import { IP } from './global';
+import { IP } from '../global';
 
 export default class Scoreboard extends React.Component {
   constructor() {

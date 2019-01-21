@@ -15,8 +15,8 @@ import MapView, { Circle } from 'react-native-maps';
 
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-import mapStyle from './mapStyle';
-import { IP } from './global';
+import mapStyle from '../mapStyle';
+import { IP } from '../global';
 
 const MAX_LAT_DELTA = 0.7;
 const MAX_LONG_DELTA = 0.7;

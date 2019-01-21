@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const sBarHeight = getStatusBarHeight();
 
-import { IP } from './global';
+import { IP } from '../global';
 
 class Profile extends React.Component {
   constructor() {
@@ -42,8 +42,8 @@ class Profile extends React.Component {
   async logout() {
     try {
       await axios.post(`${IP}/logout`);
-      this.props.navigation.navigate('World', { user: {} });
       this.props.setLoading();
+      this.props.navigation.navigate('World', { user: {} });
     } catch (err) {
       console.log(err);
     }
@@ -60,6 +60,7 @@ class Profile extends React.Component {
             color="#000000"
             onPress={() => {
               Keyboard.dismiss();
+              //   this.socket.emit('disconnect');
               this.props.navigation.openDrawer();
             }}
           />

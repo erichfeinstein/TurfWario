@@ -7,9 +7,9 @@ import {
   SafeAreaView,
 } from 'react-navigation';
 
-import World from './World';
-import Scoreboard from './Scoreboard';
-import ProfileLoginSwitch from './ProfileLoginSwitch';
+import World from './Components/World';
+import Scoreboard from './Components/Scoreboard';
+import ProfileLoginSwitch from './Components/ProfileLoginSwitch';
 
 const contentComponent = props => (
   <ScrollView>

@@ -1,3 +1,4 @@
-export const IP = 'http://192.168.1.55:3000';
+//Dev IP
+// export const IP = 'http://192.168.1.55:3000';
 //Heroku IP
-// const IP = 'https://turfwar-io.herokuapp.com';
+export const IP = 'https://turfwar-io.herokuapp.com';
