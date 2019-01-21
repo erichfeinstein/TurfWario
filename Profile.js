@@ -10,7 +10,7 @@ const sBarHeight = getStatusBarHeight();
 
 import { IP } from './global';
 
-export default class Profile extends React.Component {
+class Profile extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -40,8 +40,13 @@ export default class Profile extends React.Component {
     this.socket.emit('disconnect');
   }
   async logout() {
-    const res = await axios.post(`${IP}/logout`);
-    this.props.setLoading();
+    try {
+      await axios.post(`${IP}/logout`);
+      this.props.navigation.navigate('World', { user: {} });
+      this.props.setLoading();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   render() {
@@ -93,7 +98,7 @@ export default class Profile extends React.Component {
   }
 }
 
-// export default withNavigation(Profile);
+export default withNavigation(Profile);
 
 const styles = StyleSheet.create({
   container: {

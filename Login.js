@@ -140,13 +140,11 @@ class Login extends React.Component {
     try {
       console.log('Attempting to log in');
       const user = await axios.post(`${IP}/login`, { username, password });
-      this.setState({
+      await this.setState({
         username: '',
         password: '',
       });
-      this.props.setLoading();
-      let outOfCaps = user.data.capCount < 1;
-      this.props.navigation.navigate('World', { user: user.data, outOfCaps });
+      this.props.navigation.navigate('World', { user: user.data });
     } catch (err) {
       console.log(err);
       Alert.alert('Oops', 'There was a problem signing in', [

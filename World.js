@@ -34,8 +34,8 @@ export default class World extends React.Component {
       viewedLongDelta: 0.0421,
       caps: {},
       playerRadius: 0, //Radius that player sees of their effective area
+      loadingUser: true,
     };
-
     //Binds
     this.updateState = this.updateState.bind(this);
     this.rememberMe = this.rememberMe.bind(this);
@@ -67,17 +67,10 @@ export default class World extends React.Component {
 
   async rememberMe() {
     const user = await axios.get(`${IP}/rememberme`);
-    let outOfCaps = user.data.capCount < 1;
-    this.props.navigation.dispatch(
-      StackActions.push({
-        routeName: 'World',
-        params: {
-          user: user.data,
-          outOfCaps,
-        },
-      })
-    );
-    this.props.navigation.navigate('World', { user: user.data, outOfCaps });
+    this.props.navigation.setParams({ user: user.data });
+    this.setState({
+      loadingUser: false,
+    });
   }
 
   componentDidMount() {
@@ -104,6 +97,7 @@ export default class World extends React.Component {
     });
     this.socket.on('daily-reset', () => {
       this.props.navigation.navigate('World', { outOfCaps: false });
+      this.rememberMe();
     });
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(this.updateState);
@@ -114,17 +108,20 @@ export default class World extends React.Component {
 
   async captureArea() {
     console.log('Attempting to capture area');
-    const user = this.props.navigation.getParam('user', false);
+    const user = this.props.navigation.getParam('user', {});
     if (user) {
       await this.socket.emit('capture', {
         latitude: this.state.latitude,
         longitude: this.state.longitude,
         userId: user.id,
       });
+      let updatedUser = { ...user, capCount: user.capCount - 1 };
+      this.props.navigation.setParams({ user: updatedUser });
     }
   }
 
   render() {
+    const user = this.props.navigation.getParam('user', {});
     let latitude = this.state.latitude;
     let longitude = this.state.longitude;
     return (
@@ -204,9 +201,7 @@ export default class World extends React.Component {
         )}
         {this.state.latitude ? (
           <View>
-            {this.props.navigation.state.params &&
-            this.props.navigation.state.params.user.id &&
-            !this.props.navigation.state.params.outOfCaps ? (
+            {user && user.capCount > 0 ? (
               <View style={styles.footer}>
                 <Button
                   buttonStyle={{
@@ -215,10 +210,9 @@ export default class World extends React.Component {
                     height: 70,
                     flex: 1,
                     justifyContent: 'center',
-                    backgroundColor: this.props.navigation.state.params.user
-                      .team.color,
+                    backgroundColor: user.team.color,
                   }}
-                  title="Capture"
+                  title={`${user.capCount}`}
                   onPress={() => this.captureArea()}
                 />
               </View>
@@ -231,10 +225,7 @@ export default class World extends React.Component {
                 }}
               >
                 <Text>
-                  {this.props.navigation.state.params &&
-                  this.props.navigation.state.params.outOfCaps
-                    ? 'Out of captures'
-                    : 'Sign in to play!'}
+                  {user.capCount === 0 ? 'Out of captures' : 'Sign in to play!'}
                 </Text>
               </View>
             )}
