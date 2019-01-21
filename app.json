@@ -1,10 +1,13 @@
 {
   "expo": {
     "name": "TurfWar.io",
-    "slug": "TurfWar.io",
+    "slug": "turfwar-io",
     "privacy": "public",
     "sdkVersion": "32.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,9 +19,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "TurfWar.io is a GPS-based, global game of territory control. Use your daily capture tokens to take control of real locations or steal territory from the enemy team! \n\nFullstack Academy Stackathon project in January 2019",
+    "githubUrl": "https://github.com/erichfeinstein/TurfWar.io"
   }
 }

@@ -1,12 +1,11 @@
 import React from 'react';
-import { StackActions } from 'react-navigation';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 import Profile from './Profile';
 import Login from './Login';
 
-const IP = 'http://192.168.1.55:3000';
+import { IP } from '../global';
 
 export default class ProfileLoginSwitch extends React.Component {
   constructor() {
@@ -46,7 +45,7 @@ export default class ProfileLoginSwitch extends React.Component {
   }
 
   render() {
-    this.rememberMe();
+    // this.rememberMe();
     return this.state.loading ? (
       <View
         style={{
