@@ -13,6 +13,7 @@ import ProfileLoginSwitch from './Components/ProfileLoginSwitch';
 
 import { IP } from './global';
 console.log('Connected to server', IP);
+console.disableYellowBox = true;
 
 const contentComponent = props => (
   <ScrollView>

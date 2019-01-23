@@ -66,7 +66,7 @@ export default class World extends React.Component {
   }
 
   async rememberMe() {
-    const user = await axios.get(`${IP}/rememberme`);
+    const user = await axios.get(`${IP}/auth/rememberme`);
     this.props.navigation.setParams({ user: user.data });
     this.setState({
       loadingUser: false,
